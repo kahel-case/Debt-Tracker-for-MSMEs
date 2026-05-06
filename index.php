@@ -10,7 +10,7 @@
 <body class="bg-light">
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow p-4" style="width: 350px;">
-            <h3 class="text-center mb-4">Login</h3>
+            <h3 class="text-center mb-4">Debt Tracker: Login</h3>
 
             <form action="login.php" method="post">
                 <div class="mb-3">
