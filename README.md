@@ -18,11 +18,19 @@ This simple debt tracker website seeks to alleviate said problems and offer thes
 3. The user can then utilize CRUD functions in order to customize and update debt information as shown in the dashboard modals in the next section.
 
 ## Dashboard Modals
+The user must fill the form with appropriate values.
 ![Adding Debtors](images/adding-debtors.png)
 
+The user can then edit existing records except for their ID and email addresses.
 ![Editing Debtors](images/editing-debtor-info.png)
 
+The user can only update debt amount on a separate form.
 ![Editing Debt](images/editing-debtor-debt.png)
+
+### Finally
+The user can log out...
+
+![Logout Button](images/logout-button.png)
 
 ## Setup Instructions
 - Place the entire folder inside the desired local hosting application (Such as XAMPP)
