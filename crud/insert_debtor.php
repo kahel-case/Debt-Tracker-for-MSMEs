@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $user_id = $_POST["user_id"];
     $firstName = $_POST["firstName"];
-    $middleName = $_POST["middleName"];
     $lastName = $_POST["lastName"];
     $contactNumber = $_POST["contactNumber"];
     $emailAddress = $_POST["emailAddress"];
@@ -24,18 +23,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if(!$stmt->num_rows>0){
         $sql = "INSERT INTO debtors(
-            creditor_id,
-            debtor_first_name, 
-            debtor_middle_name, 
+            user_id,
+            debtor_first_name,
             debtor_last_name, 
             debtor_contact_number, 
             debtor_email_address, 
             debtor_amount_owed, 
             debtor_start_date,
             debtor_due_date
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssssdss",$user_id,$firstName,$middleName,$lastName,$contactNumber,$emailAddress,$amountOwed,$startDate,$dueDate);
+        $stmt->bind_param("issssdss",$user_id,$firstName,$lastName,$contactNumber,$emailAddress,$amountOwed,$startDate,$dueDate);
 
         if($stmt->execute()){
             echo "<script>alert('Debtor Successfully Added!'); window.location.href='../dashboard_debtor.php';</script>";

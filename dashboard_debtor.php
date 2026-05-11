@@ -6,7 +6,7 @@
     include 'db_connection.php';
     include 'head.php';
 
-    $stmt = $conn->prepare("SELECT * FROM debtors WHERE creditor_id = ?");
+    $stmt = $conn->prepare("SELECT * FROM debtors WHERE user_id = ?");
     $stmt->bind_param("i", $_SESSION["user_id"]);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -46,78 +46,8 @@
         </nav>
     </header>
 
-    <button data-bs-toggle="modal" data-bs-target="#insertDebtor">Add Debtor</button>
-    <div class="modal fade" id="insertDebtor" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Debtor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form action="crud/insert_debtor.php" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" class="form-control" name="user_id" value="<?= $_SESSION['user_id'] ?>" required>
-                        <div class="mb-3">
-                            <label class="form-label">First Name</label>
-                            <input type="text" class="form-control" name="firstName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Middle Name</label>
-                            <input type="text" class="form-control" name="middleName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control" name="lastName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contact Number</label>
-                            <input type="text" class="form-control" name="contactNumber" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" name="emailAddress" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Amount Owed</label>
-                            <input type="number" step="0.01" class="form-control" name="amountOwed" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Start Date</label>
-                            <input type="date" id="startDate" class="form-control" name="startDate" required>
-                        </div>
-                        <script>
-                            const dateInputNow = document.getElementById('startDate');
-                            const now = new Date();
-
-                            const yearNow = now.getFullYear();
-                            const monthNow = String(now.getMonth() + 1).padStart(2, '0');
-                            const dayNow = String(now.getDate()).padStart(2, '0');
-
-                            dateInputNow.value = `${yearNow}-${monthNow}-${dayNow}`;
-                        </script>
-                        <div class="mb-3">
-                            <label class="form-label">Due Date</label>
-                            <input type="date" id="dueDate" class="form-control" name="dueDate" required>
-                        </div>
-                        <script>
-                            window.onload = function() {
-                                const dateInputDue = document.getElementById('dueDate');
-                                const now = new Date();
-
-                                const yearDue = now.getFullYear();
-                                const monthDue = String(now.getMonth() + 1).padStart(2, '0');
-                                const dayDue = String(now.getDate() + 14).padStart(2, '0');
-
-                                dateInputDue.value = `${yearDue}-${monthDue}-${dayDue}`;
-                            };
-                        </script>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+    <div>
+        <?php include 'misc/sidebar_nav.php'; ?>
     </div>
 
 
@@ -127,7 +57,6 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">First Name</th>
-                    <th scope="col">Middle Name</th>
                     <th scope="col">Last Name</th>
                     <th scope="col">Contact Number</th>
                     <th scope="col">Email Address</th>
@@ -143,7 +72,6 @@
                 <tr>
                     <th scope="row"><?= $row['debtor_id'] ?></th>
                     <td><?= $row['debtor_first_name'] ?></td>
-                    <td><?= $row['debtor_middle_name'] ?></td>
                     <td><?= $row['debtor_last_name'] ?></td>
                     <td><?= $row['debtor_contact_number'] ?></td>
                     <td><?= $row['debtor_email_address'] ?></td>
@@ -166,10 +94,6 @@
                                             <div class="mb-3">
                                                 <label class="form-label">First Name</label>
                                                 <input type="text" class="form-control" name="firstName" value="<?= $row['debtor_first_name'] ?>" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Middle Name</label>
-                                                <input type="text" class="form-control" name="middleName" value="<?= $row['debtor_middle_name'] ?>" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Last Name</label>

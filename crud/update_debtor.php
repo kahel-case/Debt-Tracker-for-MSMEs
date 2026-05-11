@@ -6,7 +6,6 @@ include '../db_connection.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $firstName = $_POST["firstName"];
-    $middleName = $_POST["middleName"];
     $lastName = $_POST["lastName"];
     $contactNumber = $_POST["contactNumber"];
     $emailAddress = $_POST["emailAddress"];
@@ -19,8 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $sql = "UPDATE debtors SET
-        debtor_first_name = ?, 
-        debtor_middle_name = ?, 
+        debtor_first_name = ?,
         debtor_last_name = ?, 
         debtor_contact_number = ?, 
         -- debtor_email_address = ?, 
@@ -30,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         WHERE debtor_id = ?
         ";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssi",$firstName,$middleName,$lastName,$contactNumber,/* $emailAddress, *//* $amountOwed, */$startDate,$dueDate,$debtor_id);
+    $stmt->bind_param("sssssi",$firstName,$lastName,$contactNumber,/* $emailAddress, *//* $amountOwed, */$startDate,$dueDate,$debtor_id);
 
     if($stmt->execute()){
         echo "<script>alert('Debtor Successfully Updated!'); window.location.href='../dashboard_debtor.php';</script>";
