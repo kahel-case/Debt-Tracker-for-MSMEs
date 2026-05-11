@@ -6,15 +6,21 @@
     include 'db_connection.php';
     include 'head.php';
 
-    $stmt = $conn->prepare("SELECT * FROM products WHERE user_id = ?");
-    $stmt->bind_param("i", $_SESSION["user_id"]);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt1 = $conn->prepare("SELECT * FROM products WHERE user_id = ?");
+    $stmt1->bind_param("i", $_SESSION["user_id"]);
+    $stmt1->execute();
+    $result = $stmt1->get_result();
 
-    $stmt = $conn->prepare("SELECT debtor_first_name, debtor_last_name, debtor_id FROM debtors WHERE user_id = ?;");
-    $stmt->bind_param("i", $_SESSION["user_id"]);
-    $stmt->execute();
-    $debtors = $stmt->get_result();
+    $stmt2 = $conn->prepare("SELECT debtor_first_name, debtor_last_name, debtor_id FROM debtors WHERE user_id = ?;");
+    $stmt2->bind_param("i", $_SESSION["user_id"]);
+    $stmt2->execute();
+    $debtors = $stmt2->get_result();
+
+    $debtors_list = [];
+
+    while ($row = $debtors->fetch_assoc()) {
+        $debtors_list[] = $row;
+    }
 ?>
 
 <body>
@@ -122,15 +128,18 @@
                                         <h5 class="modal-title">Loan Product to Debtor</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <form action="crud/update_product.php" method="post" id="loan-product-<?= $row['product_id'] ?>">
+                                    <form action="crud/loan_product.php" method="post" id="loan-product-<?= $row['product_id'] ?>">
                                         <div class="modal-body">
                                             <input type="hidden" class="form-control" name="productID" value="<?= $row['product_id'] ?>" required>
                                             <div class="mb-3">
                                                 <label for="targetDebtor">Target Debtor: </label>
-                                                <select name='targetDebtor' id="targetDebtor">
-                                                <?php while ($debtors_row = $debtors->fetch_assoc()): ?>
-                                                    <option value="<?= $debtors_row["debtor_id"] ?>"> <?= $debtors_row["debtor_first_name"] ?> <?= $debtors_row["debtor_last_name"] ?></option>
-                                                <?php endwhile; ?>
+                                                <select name="targetDebtor" id="targetDebtor-<?= $row['product_id'] ?>">
+                                                    <?php foreach ($debtors_list as $debtor): ?>
+                                                        <option value="<?= $debtor['debtor_id'] ?>">
+                                                            <?= $debtor['debtor_first_name'] ?>
+                                                            <?= $debtor['debtor_last_name'] ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
@@ -152,7 +161,8 @@
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label">Product Stock</label>
-                                                <input type="number" step="1" min="0" class="form-control" name="productStock" value="<?= $row['product_stock'] ?>" disabled>
+                                                <input type="number" step="1" min="0" class="form-control" value="<?= $row['product_stock'] ?>" disabled>
+                                                <input type="hidden" step="1" min="0" class="form-control" name="productStock" value="<?= $row['product_stock'] ?>">
                                             </div>
                                         </div>
                                     </form>
