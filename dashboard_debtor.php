@@ -6,6 +6,19 @@
     include 'db_connection.php';
     include 'head.php';
 
+    $sql = "
+    UPDATE debtors
+    SET debtor_debt_status =
+        CASE
+            WHEN debtor_amount_owed = 0 THEN 'PAID'
+            WHEN debtor_due_date > CURDATE() THEN 'PENDING'
+            WHEN debtor_due_date = CURDATE() THEN 'DUE'
+            WHEN debtor_due_date < CURDATE() THEN 'OVERDUE'
+        END
+    ";
+
+    $conn->query($sql);
+
     $stmt = $conn->prepare("SELECT * FROM debtors WHERE user_id = ?");
     $stmt->bind_param("i", $_SESSION["user_id"]);
     $stmt->execute();
