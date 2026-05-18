@@ -4,7 +4,7 @@
 <?php 
     include 'validate_session.php';
     include 'db_connection.php';
-    include 'head.php';
+    require 'head.php';
 
     $sql = "
     UPDATE debtors
@@ -25,48 +25,38 @@
     $result = $stmt->get_result();
 ?>
 
-<style>
-    .sidebar-sticky {
-    position: sticky;
-    top: 70px;
-    display: flex;
-    flex-direction: column;
-    align-self: flex-start;
-}
-.sticky-note {
-    background: #fff9a6;
-    padding: 14px;
-    border-radius: 8px;
-    box-shadow: 2px 4px 10px rgba(0,0,0,0.15);
-    position: relative;
-}
-
-</style>
-
 <body>
-    <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+    <header class="sticky-top shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container py-2">
+
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold" href="#">Debt Manager</a>
+
+                <!-- Toggle -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <!-- Nav content -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+
+                    <!-- Left nav -->
+                    <ul class="navbar-nav me-auto gap-lg-2">
                         <li class="nav-item">
-                            <a class="nav-link active" href="dashboard_debtor.php">Debt Manager <span class="sr-only">(current)</span></a>
+                            <a class="nav-link active" href="dashboard_debtor.php"><strong>Debtors</strong></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="dashboard_inventory.php">Inventory Manager</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto align-items-lg-center">
-                        <li class="nav-item">
-                            <span class="nav-link text-light">User: <?= $_SESSION['username']; ?></span>
-                        </li>
-                        <li class="nav-item">
-                            <button onclick="window.location.href='logout.php'" class="btn btn-danger rounded-pill px-4">Logout</button>
+                            <a class="nav-link" href="dashboard_inventory.php">Inventory</a>
                         </li>
                     </ul>
+
+                    <!-- Right side -->
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-light small">User: <span class="fw-semibold"><?= $_SESSION['username']; ?></span></span>
+                        <button onclick="window.location.href='logout.php'" class="btn btn-danger btn-sm rounded-pill px-4">Logout</button>
+                    </div>
+
                 </div>
             </div>
         </nav>
@@ -79,33 +69,24 @@
             </div>
 
             <div class="col-lg-10 flex-column">
-                <div class="content-card">
-                    <h2 class="mb-4">Debtor Records</h2>
-                    <table id="myTable" class="table table-striped table-hover table-bordered align-middle">
+                <div class="table-responsive content-card mb-4">
+                    <table id="myTable" class="table table-hover table-bordered align-middle border shadow-sm">
                         <thead class="table-dark text-center">
                             <tr>
                                 <th>#</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th>Contact Number</th>
-                                <th>Email Address</th>
-                                <th>Amount Owed</th>
-                                <th>Start Date</th>
-                                <th>Due Date</th>
+                                <th>Contact</th>
+                                <th>Email</th>
+                                <th>Amount</th>
+                                <th>Start</th>
+                                <th>Due</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php while($row = $result->fetch_assoc()): ?>
-
-                            <tr class="<?php
-                                            if($row['debtor_debt_status']=='OVERDUE') echo 'status-overdue';
-                                            elseif($row['debtor_debt_status']=='DUE') echo 'status-due';
-                                            elseif($row['debtor_debt_status']=='PAID') echo 'status-paid';
-                                            else echo 'status-pending';
-                                ?>">
-
                                 <td><?= $row['debtor_id'] ?></td>
                                 <td><?= $row['debtor_first_name'] ?></td>
                                 <td><?= $row['debtor_last_name'] ?></td>
@@ -114,13 +95,21 @@
                                 <td>₱<?= number_format($row['debtor_amount_owed'],2) ?></td>
                                 <td><?= $row['debtor_start_date'] ?></td>
                                 <td><?= $row['debtor_due_date'] ?></td>
-                                <td><span class="badge-status"><?= $row['debtor_debt_status'] ?></span></td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill px-4 py-2
+                                        <?= $row['debtor_debt_status']=='OVERDUE' ? 'bg-danger' : '' ?>
+                                        <?= $row['debtor_debt_status']=='DUE' ? 'bg-warning text-dark' : '' ?>
+                                        <?= $row['debtor_debt_status']=='PAID' ? 'bg-success' : '' ?>
+                                        <?= $row['debtor_debt_status']=='PENDING' ? 'bg-secondary' : '' ?>">
+                                        <?= $row['debtor_debt_status'] ?>
+                                    </span>
+                                </td>
 
                                 <td>
                                     <!-- Action Buttons -->
-                                    <div class="d-flex w-100">
-                                        <button data-bs-toggle="modal" data-bs-target="#edit-info-<?= $row['debtor_id'] ?>" class="btn btn-sm btn-outline-primary flex-fill me-1">Edit Info</button>
-                                        <button data-bs-toggle="modal" data-bs-target="#edit-debt-<?= $row['debtor_id'] ?>" class="btn btn-sm btn-success flex-fill ms-1">Edit Debt</button>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#edit-info-<?= $row['debtor_id'] ?>">Edit Info</button>
+                                        <button class="btn btn-sm btn-success flex-fill" data-bs-toggle="modal" data-bs-target="#edit-debt-<?= $row['debtor_id'] ?>">Edit Debt</button>
                                     </div>
 
                                     <!-- Edit Info Modal -->

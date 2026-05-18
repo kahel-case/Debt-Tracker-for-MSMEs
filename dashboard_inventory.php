@@ -29,29 +29,37 @@
 ?>
 
 <body>
-    <header class="sticky-top">
+    <header class="sticky-top shadow-sm">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container py-2">
+
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold" href="#">Debt Manager</a>
+
+                <!-- Toggle -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
+                <!-- Nav content -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+
+                    <!-- Left nav -->
+                    <ul class="navbar-nav me-auto gap-lg-2">
                         <li class="nav-item">
-                            <a class="nav-link" href="dashboard_debtor.php">Debt Manager</a>
+                            <a class="nav-link" href="dashboard_debtor.php">Debtors</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="dashboard_inventory.php">Inventory Manager <span class="sr-only">(current)</span></a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto align-items-lg-center">
-                        <li class="nav-item">
-                            <span class="nav-link text-light">User: <?= $_SESSION['username']; ?></span>
-                        </li>
-                        <li class="nav-item">
-                            <button onclick="window.location.href='logout.php'" class="btn btn-danger rounded-pill px-4">Logout</button>
+                            <a class="nav-link active" href="dashboard_inventory.php"><strong>Inventory</strong></a>
                         </li>
                     </ul>
+
+                    <!-- Right side -->
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-light small">User: <span class="fw-semibold"><?= $_SESSION['username']; ?></span></span>
+                        <button onclick="window.location.href='logout.php'" class="btn btn-danger btn-sm rounded-pill px-4">Logout</button>
+                    </div>
+
                 </div>
             </div>
         </nav>
@@ -64,9 +72,8 @@
             </div>
 
             <div class="col-lg-10 flex-column">
-                <div class="content-card">
-                    <h2 class="mb-4">Product Inventory</h2>
-                    <table id="myTable" class="table table-striped table-hover table-bordered align-middle">
+                <div class="table-responsive content-card mb-4">
+                    <table id="myTable" class="table table-hover table-bordered align-middle border shadow-sm">
                         <thead class="table-dark text-center">
                             <tr>
                                 <th>#</th>
@@ -74,7 +81,7 @@
                                 <th>Price</th>
                                 <th>Unit Price</th>
                                 <th>Stock</th>
-                                <th>Action</th>
+                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
 
@@ -85,11 +92,7 @@
                                 <td><?= $product['product_name'] ?></td>
                                 <td>₱<?= number_format($product['product_price'],2) ?></td>
                                 <td><?= $product['product_unit_price'] ?: 'N/A' ?></td>
-                                <td>
-                                    <span class="badge bg-secondary">
-                                        <?= $product['product_stock'] ?>
-                                    </span>
-                                </td>
+                                <td><span class="badge bg-secondary"><?= $product['product_stock'] ?></span></td>
 
                                 <td class="d-flex gap-2 flex-wrap">
 

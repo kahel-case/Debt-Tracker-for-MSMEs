@@ -6,9 +6,14 @@
 <script>
 $(document).ready(function () {
     $('#myTable').DataTable({
-        pageLength: 10,
         responsive: true,
-        order: [[0, 'desc']]
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        order: [[0, 'desc']],
+        columnDefs: [
+            { width: "200px", targets: 4 } // email column index
+        ],
+        autoWidth: false
     });
 });
 </script>

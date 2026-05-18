@@ -4,6 +4,6 @@
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
     <!-- <link rel="stylesheet" href="lib/datatables/dataTables.css"> -->
     <link rel="stylesheet" href="lib/datatables/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" href="lib/extra/extra.css">
+    <link rel="stylesheet" href="lib/extra/extra.css?v=4">
     <title>Dashboard</title>
 </head>
