@@ -5,7 +5,7 @@ include '../db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $debtor_id = $_POST["id-delete"];
+    $debtor_id = $_POST["id"];
     
     $sql = "DELETE FROM debtors WHERE debtor_id = ?";
     $stmt = $conn->prepare($sql);

@@ -29,10 +29,9 @@
 ?>
 
 <body>
-    <header>
+    <header class="sticky-top">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container py-2">
-                <h1 class="navbar-brand text-light"><strong>Debt Tracker</strong></h1>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -47,14 +46,10 @@
                     </ul>
                     <ul class="navbar-nav ms-auto align-items-lg-center">
                         <li class="nav-item">
-                            <span class="nav-link text-light">
-                                User: <?php echo $_SESSION['username']; ?>
-                            </span>
+                            <span class="nav-link text-light">User: <?= $_SESSION['username']; ?></span>
                         </li>
                         <li class="nav-item">
-                            <button onclick="window.location.href='logout.php'" class="btn btn-danger ms-lg-2">
-                                Logout
-                            </button>
+                            <button onclick="window.location.href='logout.php'" class="btn btn-danger rounded-pill px-4">Logout</button>
                         </li>
                     </ul>
                 </div>
@@ -62,128 +57,275 @@
         </nav>
     </header>
 
-    <div>
-        <?php include 'misc/sidebar_nav.php'; ?>
-    </div>
+    <div class="container-fluid mt-4">
+        <div class="row g-4">
+            <div class="col-lg-2 flex-column sidebar-sticky">
+                <?php include 'misc/sidebar_nav.php'; ?>
+            </div>
 
-    <div class="mx-3">
-        <table id="myTable" class="table table-responsive table-striped table-hover table-bordered">
-            <thead class="thead-dark text-center">
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Product Name</th>
-                    <th scope="col">Product Price</th>
-                    <th scope="col">Product Unit Price</th>
-                    <th scope="col">Product Stock</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($products_list as $product): ?>
-                <tr>
-                    <th scope="row"><?= $product['product_id'] ?></th>
-                    <td><?= $product['product_name'] ?></td>
-                    <td><?= $product['product_price'] ?></td>
-                    <td><?= $product['product_unit_price'] ?></td>
-                    <td><?= $product['product_stock'] ?></td>
-                    <td>
-                        <button data-bs-toggle="modal" data-bs-target="#edit-product-info-<?= $product['product_id'] ?>" class="btn btn-primary">Edit Info</button>
-                        <div class="modal fade" id="edit-product-info-<?= $product['product_id'] ?>" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Edit Product Information</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="col-lg-10 flex-column">
+                <div class="content-card">
+                    <h2 class="mb-4">Product Inventory</h2>
+                    <table id="myTable" class="table table-striped table-hover table-bordered align-middle">
+                        <thead class="table-dark text-center">
+                            <tr>
+                                <th>#</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Unit Price</th>
+                                <th>Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <?php foreach ($products_list as $product): ?>
+                            <tr>
+                                <td><?= $product['product_id'] ?></td>
+                                <td><?= $product['product_name'] ?></td>
+                                <td>₱<?= number_format($product['product_price'],2) ?></td>
+                                <td><?= $product['product_unit_price'] ?: 'N/A' ?></td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <?= $product['product_stock'] ?>
+                                    </span>
+                                </td>
+
+                                <td class="d-flex gap-2 flex-wrap">
+
+                                    <!-- Action Buttons -->
+                                    <div class="d-flex w-100">
+                                        <button class="btn btn-sm btn-outline-primary flex-fill me-1" data-bs-toggle="modal" data-bs-target="#edit-product-<?= $product['product_id'] ?>">Edit</button>
+                                        <button class="btn btn-sm btn-success flex-fill ms-1" data-bs-toggle="modal" data-bs-target="#loan-product-<?= $product['product_id'] ?>">Loan</button>
                                     </div>
-                                    <form action="crud/update_product.php" method="post" id="update-product-info-<?= $row['product_id'] ?>">
-                                        <div class="modal-body">
-                                            <input type="hidden" class="form-control" name="productID" value="<?= $row['product_id'] ?>" required>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Name</label>
-                                                <input type="text" class="form-control" name="productName" value="<?= $row['product_name'] ?>" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Price</label>
-                                                <input type="number" step="0.01" min="0" class="form-control" name="productPrice" value="<?= $row['product_price'] ?>" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Unit Price (Optional)</label>
-                                                <input type="text" class="form-control" name="productUnitPrice" value="<?= $row['product_unit_price'] ?>" placeholder="Ex. (per Kilo), (/oz)">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Stock</label>
-                                                <input type="number" step="1" min="0" class="form-control" name="productStock" value="<?= $row['product_stock'] ?>" required>
+
+                                    <!-- EDIT MODAL -->
+                                    <div class="modal fade" id="edit-product-<?= $product['product_id'] ?>">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title">Edit Product</h5>
+                                                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form action="crud/update_product.php" method="post">
+                                                    <div class="modal-body p-4">
+                                                        <input type="hidden" name="productID" value="<?= $product['product_id'] ?>">
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Product Name</label>
+                                                            <input type="text" class="form-control rounded-3" name="productName" value="<?= $product['product_name'] ?>" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Price</label>
+                                                            <input type="number" step="0.01" class="form-control rounded-3" name="productPrice" value="<?= $product['product_price'] ?>" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Unit Price</label>
+                                                            <input type="text" class="form-control rounded-3" name="productUnitPrice" value="<?= $product['product_unit_price'] ?>">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Stock</label>
+                                                            <input type="number" class="form-control rounded-3" name="productStock" value="<?= $product['product_stock'] ?>" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modal-footer border-0 px-4 pb-4">
+                                                        <button type="submit" class="btn btn-primary rounded-pill px-4">Save</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
-                                    </form>
-                                    <form action="crud/delete_product.php" method="post" id="delete-product-<?= $row['product_id'] ?>"><input type="hidden" class="form-control" name="id-delete" value="<?= $row['product_id'] ?>" required></form>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-danger" form="delete-product-<?= $row['product_id'] ?>">Delete Product</button>
-                                        <button type="submit" class="btn btn-primary" form="update-product-info-<?= $row['product_id'] ?>">Save Changes</button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <button data-bs-toggle="modal" data-bs-target="#loan-<?= $product['product_id'] ?>" class="btn btn-primary">Loan Product</button>
-                        <div class="modal fade" id="loan-<?= $product['product_id'] ?>" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Loan Product to Debtor</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <form action="crud/loan_product.php" method="post" id="loan-product-<?= $product['product_id'] ?>">
-                                        <div class="modal-body">
-                                            <input type="hidden" class="form-control" name="productID" value="<?= $product['product_id'] ?>" required>
-                                            <div class="mb-3">
-                                                <label for="targetDebtor">Target Debtor: </label>
-                                                <select name="targetDebtor" id="targetDebtor-<?= $product['product_id'] ?>">
-                                                    <?php foreach ($debtors_list as $debtor): ?>
-                                                        <option value="<?= $debtor['debtor_id'] ?>">
-                                                            <?= $debtor['debtor_first_name'] ?>
-                                                            <?= $debtor['debtor_last_name'] ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Amount</label>
-                                                <input type="number" step="1" min="0" class="form-control" name="productAmountToLoan" value="1" required>
-                                            </div>
-                                            <hr>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Name</label>
-                                                <input type="text" class="form-control" name="productName" value="<?= $product['product_name'] ?>" disabled>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Price</label>
-                                                <input type="number" step="0.01" min="0" class="form-control" name="productPrice" value="<?= $product['product_price'] ?>" disabled>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Unit Price (Optional)</label>
-                                                <input type="text" class="form-control" name="productUnitPrice" value="<?= $product['product_unit_price'] ?>" placeholder="" disabled>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Product Stock</label>
-                                                <input type="number" step="1" min="0" class="form-control" value="<?= $product['product_stock'] ?>" disabled>
-                                                <input type="hidden" step="1" min="0" class="form-control" name="productStock" value="<?= $product['product_stock'] ?>">
+                                    <!-- LOAN MODAL -->
+                                    <div class="modal fade" id="loan-product-<?= $product['product_id'] ?>">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header bg-success text-white">
+                                                    <h5 class="modal-title">Loan Product</h5>
+                                                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form action="crud/loan_product.php" method="post">
+                                                    <div class="modal-body p-4">
+                                                        <input type="hidden" name="productID" value="<?= $product['product_id'] ?>">
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Select Debtor</label>
+                                                            <select class="form-select rounded-3" name="targetDebtor" required>
+                                                                <?php foreach ($debtors_list as $debtor): ?>
+                                                                    <option value="<?= $debtor['debtor_id'] ?>">
+                                                                        <?= $debtor['debtor_first_name'] ?>
+                                                                        <?= $debtor['debtor_last_name'] ?>
+                                                                    </option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-semibold">Quantity</label>
+                                                            <input type="number" min="1" class="form-control rounded-3" name="productAmountToLoan" value="1" required>
+                                                        </div>
+                                                    <hr>
+                                                        <div class="small text-muted">Stock available: <strong><?= $product['product_stock'] ?></strong></div>
+                                                    </div>
+                                                    <div class="modal-footer border-0 px-4 pb-4">
+                                                        <button type="submit" class="btn btn-success rounded-pill px-4">Confirm Loan</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
-                                    </form>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success" form="loan-product-<?= $product['product_id'] ?>">Loan Product</button>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+
+                                </td>
+                            </tr>
+
+                            <?php endforeach; ?>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- ADD DEBTOR MODAL -->
+    <div class="modal fade" id="insertDebtor" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow border-0 rounded-4">
+
+                <div class="modal-header bg-primary text-white rounded-top-4">
+                    <h5 class="modal-title">Add New Debtor</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form action="crud/insert_debtor.php" method="post">
+                    <div class="modal-body p-4">
+
+                        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">First Name</label>
+                            <input type="text" class="form-control rounded-3" name="firstName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Last Name</label>
+                            <input type="text" class="form-control rounded-3" name="lastName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Contact Number</label>
+                            <input type="text" class="form-control rounded-3" name="contactNumber" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control rounded-3" name="emailAddress" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Amount Owed</label>
+                            <input type="number" step="0.01" min="0" class="form-control rounded-3" name="amountOwed" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Start Date</label>
+                            <input type="date" id="startDate" class="form-control rounded-3" name="startDate" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Due Date</label>
+                            <input type="date" id="dueDate" class="form-control rounded-3" name="dueDate" required>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-0 px-4 pb-4">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">Add Debtor</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD PRODUCT MODAL -->
+    <div class="modal fade" id="insertProduct" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow border-0 rounded-4">
+
+                <div class="modal-header bg-success text-white rounded-top-4">
+                    <h5 class="modal-title">Add Product</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form action="crud/insert_product.php" method="post">
+                    <div class="modal-body p-4">
+
+                        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Product Name</label>
+                            <input type="text" class="form-control rounded-3" name="productName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Product Price</label>
+                            <input type="number" step="0.01" min="0" class="form-control rounded-3" name="productPrice" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Product Unit Price <small class="text-muted">(optional)</small>
+                            </label>
+                            <input type="text" class="form-control rounded-3" name="productUnitPrice" placeholder="Ex. /kg, /oz">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Product Stock</label>
+                            <input type="number" min="0" class="form-control rounded-3" name="productStock" required>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer border-0 px-4 pb-4">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">Add Product</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+        const today = new Date();
+
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2,'0');
+        const dd = String(today.getDate()).padStart(2,'0');
+
+        const startDate = document.getElementById('startDate');
+        if(startDate){
+            startDate.value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        const due = new Date();
+        due.setDate(due.getDate() + 14);
+
+        const dueY = due.getFullYear();
+        const dueM = String(due.getMonth() + 1).padStart(2,'0');
+        const dueD = String(due.getDate()).padStart(2,'0');
+
+        const dueDate = document.getElementById('dueDate');
+        if(dueDate){
+            dueDate.value = `${dueY}-${dueM}-${dueD}`;
+        }
+
+    });
+    </script>
+    
     <?php include 'scripts.php'; ?>
 </body>
 

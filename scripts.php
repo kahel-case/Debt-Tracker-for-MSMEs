@@ -4,8 +4,12 @@
 <script src="lib/dataTables/dataTables.bootstrap5.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        $('#myTable').DataTable();
+$(document).ready(function () {
+    $('#myTable').DataTable({
+        pageLength: 10,
+        responsive: true,
+        order: [[0, 'desc']]
     });
+});
 </script>
 
